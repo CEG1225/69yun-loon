@@ -14,7 +14,9 @@ const path = require("path");
 const vm = require("vm");
 const { URL } = require("url");
 
-const SCRIPT = path.join(__dirname, "..", "69yun.js");
+// 默认测本地副本；设置 SHIM_SRC 可测线上版本，例如:
+//   SHIM_SRC=https://raw.githubusercontent.com/CEG1225/69yun-loon/main/69yun.js node dev/loon-shim.js
+const SCRIPT = process.env.SHIM_SRC || path.join(__dirname, "..", "69yun.js");
 
 /* ---------------- 底层 HTTP ---------------- */
 
@@ -191,7 +193,14 @@ function show(result, label) {
 /* ---------------- 测试用例 ---------------- */
 
 (async function main() {
-    let src = fs.readFileSync(SCRIPT, "utf8");
+    let src;
+    if (/^https?:\/\//i.test(SCRIPT)) {
+        console.log("从线上拉取被测脚本: " + SCRIPT);
+        src = await (await fetch(SCRIPT)).text();
+    } else {
+        src = fs.readFileSync(SCRIPT, "utf8");
+    }
+    console.log("被测脚本大小: " + src.length + " 字节\n");
     let pass = 0, fail = 0;
     function check(name, cond, extra) {
         if (cond) { pass++; console.log("  [PASS] " + name); }
