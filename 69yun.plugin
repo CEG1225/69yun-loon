@@ -1,0 +1,19 @@
+#!name = 69云自动签到
+#!desc = 69yun69.com 每日自动签到，结果以系统通知推送；无需 MitM 证书
+#!author = CEG1225
+#!homepage = https://github.com/CEG1225/69yun-loon
+#!icon = checkmark.seal.fill
+#!tag = 签到,工具
+#!loon_version = 3.5.1(733)
+
+[Argument]
+email = input,"",tag=69云登录邮箱,desc=填写 69yun69.com 的登录邮箱
+passwd = input,"",tag=69云登录密码,desc=填写 69yun69.com 的登录密码，只保存在你本机的 Loon 配置中
+code = input,"",tag=二步验证动态码(可选),desc=没有开启二步验证就留空
+email2 = input,"",tag=第二个账号邮箱(可选),desc=只签到 1 个账号就留空
+passwd2 = input,"",tag=第二个账号密码(可选),desc=只签到 1 个账号就留空
+cron = input,"0 30 8 * * *",tag=定时执行,desc=六段格式：秒 分 时 日 月 周，默认每天 08:30:00
+enabled = switch,true,tag=启用定时签到
+
+[Script]
+cron {cron} script-path=https://raw.githubusercontent.com/CEG1225/69yun-loon/main/69yun.js,argument=[{email},{passwd},{code},{email2},{passwd2}],enable={enabled},tag=69云签到,timeout=120
